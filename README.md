@@ -1,7 +1,12 @@
 # grav-backup-upgrade-update-all-projects
-PHP script with logging to make a backup, upgrade the core , update the plugins of multiple grav cms.
+PHP script for grav installations with logging to  
+1.  backup
+2.  core upgrade
+3.  plugins update
 
 todo: 
-- send errors to email
 - connect with cron
 
+required:
+- https://github.com/Seldaek/monolog via composer
+- ssmtp installed and configured
