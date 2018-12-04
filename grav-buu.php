@@ -5,9 +5,13 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 //find all grav installations on server , exclude recycle of file-explorer
-$arPaths=shell_exec("find /srv/users/serverpilot/apps | grep /bin/grav | grep -v recycle");
-
+$arPathsb=
+array_filter((explode(PHP_EOL,(shell_exec("find /srv/users/serverpilot/apps | grep /bin/grav | grep -v recycle")))));
 //$arPaths=array("/srv/users/serverpilot/apps/gravcms/public/mijajlovic.ch/","/srv/users/serverpilot/apps/ddp/public/");
+
+$arPaths=array_map( 
+    function($value) { return str_replace('/bin/grav','',$value); }, 
+    $arPathsb);
 
 $asAr=array([
         "sCommand" => "php bin/grav backup",
