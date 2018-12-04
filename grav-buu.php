@@ -4,7 +4,10 @@ require 'vendor/autoload.php';
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-$arPaths=array("/srv/users/serverpilot/apps/gravcms/public/mijajlovic.ch/","/srv/users/serverpilot/apps/ddp/public/");
+//find all grav installations on server , exclude recycle of file-explorer
+$arPaths=shell_exec("find /srv/users/serverpilot/apps | grep /bin/grav | grep -v recycle");
+
+//$arPaths=array("/srv/users/serverpilot/apps/gravcms/public/mijajlovic.ch/","/srv/users/serverpilot/apps/ddp/public/");
 
 $asAr=array([
         "sCommand" => "php bin/grav backup",
@@ -18,8 +21,8 @@ $asAr=array([
 ]);
 
 $oLog = new Logger('');
-$oLog->pushHandler(new StreamHandler('grav-buu.log', Logger::DEBUG));
-$oLog->pushHandler(new StreamHandler('grav-buu-no-debug.log', Logger::INFO));
+$oLog->pushHandler(new StreamHandler('/srv/users/serverpilot/grav-buu/grav-buu.log', Logger::DEBUG));
+$oLog->pushHandler(new StreamHandler('/srv/users/serverpilot/grav-buu/grav-buu-no-debug.log', Logger::INFO));
 
 function fSendmail($sError,$sPath,$sCommand){
     $sMail=
@@ -30,8 +33,8 @@ path --> $sPath
 command --> $sCommand
 message --> $sError
 ";
-	file_put_contents("email.tmp",$sMail);
-	shell_exec("ssmtp g.strainovic@gmail.com < email.tmp");
+	file_put_contents("/srv/users/serverpilot/grav-buu/email.tmp",$sMail);
+	shell_exec("ssmtp g.strainovic@gmail.com < ~/grav-buu/email.tmp");
 };
 
 function fDebug($sError,$sPath,$sCommand){
