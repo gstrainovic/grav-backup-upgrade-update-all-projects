@@ -1,11 +1,9 @@
 # grav-backup-upgrade-update-all-projects
-PHP script for grav installations with logging to  
+PHP script for grav installations with logging & email-alert to  
 1.  backup
 2.  core upgrade
 3.  plugins update
-
-todo: 
-- connect with cron
+4.  security check
 
 required:
 - https://github.com/Seldaek/monolog via composer

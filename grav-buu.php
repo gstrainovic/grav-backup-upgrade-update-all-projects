@@ -7,7 +7,6 @@ use Monolog\Handler\StreamHandler;
 //find all grav installations on server , exclude recycle of file-explorer
 $arPathsb=
 array_filter((explode(PHP_EOL,(shell_exec("find /srv/users/serverpilot/apps | grep /bin/grav | grep -v recycle")))));
-//$arPaths=array("/srv/users/serverpilot/apps/gravcms/public/mijajlovic.ch/","/srv/users/serverpilot/apps/ddp/public/");
 
 $arPaths=array_map( 
     function($value) { return str_replace('/bin/grav','',$value); }, 
@@ -22,6 +21,9 @@ $asAr=array([
 ],[
         "sCommand" => "php bin/gpm update -y",
         "sTest" => "Nothing to update."
+],[
+        "sCommand" => "php bin/grav security",
+        "sTest" => "[OK]"
 ]);
 
 $oLog = new Logger('');
@@ -63,6 +65,13 @@ foreach ($arPaths as $sPath) {
             $sOutput = shell_exec($as["sCommand"]);
             if (strpos($sOutput, $as["sTest"]) !== false) {
                 fDebug("ok: match: ".$sOutput." with ".$as["sTest"],$sPath,$as["sCommand"]);
+            } elseif (strpos($sOutput, "Downloading package...") !== false) {
+                $all=explode('|- Downloading package...',$sOutput);
+                $firstLast= var_dump(reset($all) , end($all));
+                fWarning("fail: match: ".$firstLast." with ".$as["sTest"],$sPath,$as["sCommand"]);
+                fSendmail($firstLast,$sPath,$as["sCommand"]);
+            } elseif (strpos($sOutput, "atenschutz") !== false && strpos($sOutput, "ecurity") !== false) {
+                fDebug("ignore: match: ".$sOutput." with ".$as["sTest"],$sPath,$as["sCommand"]);
             } else {
                 fWarning("fail: match: ".$sOutput." with ".$as["sTest"],$sPath,$as["sCommand"]);
                 fSendmail($sOutput,$sPath,$as["sCommand"]);
